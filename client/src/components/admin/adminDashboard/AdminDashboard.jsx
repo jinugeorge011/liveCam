@@ -32,7 +32,7 @@ const AdminDashboard = () => {
             <Link to="/admin/overview" className="text-lg hover:text-teal-400 transition">
               Overview
             </Link>
-            <Link to="/admin/users" className="text-lg hover:text-teal-400 transition">
+            <Link to="/admindashboard/users" className="text-lg hover:text-teal-400 transition">
               Users
             </Link>
             <Link to="/admin/meetings" className="text-lg hover:text-teal-400 transition">
