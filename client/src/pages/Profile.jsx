@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { getUserDetailsAPI, updateUserDetailsAPI } from '../services/allAPIs';
-import { useAuth } from '../context/AuthContext'; // Assuming you have an Auth Context for JWT token
+import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
-  const { token, user, setUser } = useAuth();  // Example using Context for token and user
-  const [formData, setFormData] = useState({ username: '', email: '', bio: '' });
+  const { token, user, setUser } = useAuth(); // Example using Context for token and user
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    bio: '',
+    profileImage: '', // New field for the profile image
+  });
+  const [previewImage, setPreviewImage] = useState(null); // Preview for image upload
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -14,11 +20,13 @@ const Profile = () => {
       const fetchUserDetails = async () => {
         try {
           const userDetails = await getUserDetailsAPI(token);
-          setFormData({ 
-            username: userDetails.username, 
+          setFormData({
+            username: userDetails.username,
             email: userDetails.email,
-            bio: userDetails.bio || 'No bio provided.'
+            bio: userDetails.bio || 'No bio provided.',
+            profileImage: userDetails.profileImage || '',
           });
+          setPreviewImage(userDetails.profileImage || null);
         } catch (error) {
           setMessage('Error fetching user details');
         }
@@ -33,6 +41,15 @@ const Profile = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle profile image upload
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, profileImage: file }));
+      setPreviewImage(URL.createObjectURL(file)); // Show preview
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,8 +57,17 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      const updatedUser = await updateUserDetailsAPI(formData, token);
-      setUser(updatedUser);  // Update the user state after successful update
+      // Prepare form data for submission
+      const formDataToSend = new FormData();
+      formDataToSend.append('username', formData.username);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('bio', formData.bio);
+      if (formData.profileImage instanceof File) {
+        formDataToSend.append('profileImage', formData.profileImage);
+      }
+
+      const updatedUser = await updateUserDetailsAPI(formDataToSend, token);
+      setUser(updatedUser); // Update the user state after successful update
       setMessage('Profile updated successfully!');
     } catch (error) {
       setMessage('Error updating profile');
@@ -51,11 +77,11 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
+    <div className="min-h-screen bg-purple-50 flex flex-col items-center py-10">
       {/* Profile Card */}
       <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
         <div className="flex items-center justify-between border-b pb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">My Profile</h2>
+          <h2 className="text-2xl font-semibold text-purple-800">My Profile</h2>
         </div>
 
         {/* Error or Success message */}
@@ -67,6 +93,36 @@ const Profile = () => {
 
         {/* Profile Form */}
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+          {/* Profile Image Upload */}
+          <div className="flex flex-col items-center space-y-4">
+            <div className="relative">
+              {previewImage ? (
+                <img
+                  src={previewImage}
+                  alt="Profile Preview"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-purple-300"
+                />
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-purple-600">
+                  No Image
+                </div>
+              )}
+              <label
+                htmlFor="profileImage"
+                className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full cursor-pointer"
+              >
+                <input
+                  type="file"
+                  id="profileImage"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                Upload
+              </label>
+            </div>
+          </div>
+
           <div className="flex justify-between">
             <div className="w-full pr-2">
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
@@ -110,7 +166,7 @@ const Profile = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-md"
+              className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

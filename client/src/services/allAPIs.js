@@ -94,4 +94,27 @@ export const uploadFileAPI = async (file) => {
   }
 };
 
+// fetchUserStatsAPI
+export const fetchUserStatsAPI = async (token) => {
+  try {
+    // Making a GET request to the '/api/user/stats' endpoint with the provided token
+    const response = await commonAPI('get', `${serverURL}/api/user/stats`, null,
+      'Bearer');
+      return response; // Return the response so the calling function can handle it
+      } catch (error) {
+        // Handle any errors that occur during the request
+        console.error('Error fetching user stats:', error);
+        throw error; // Rethrow the error to allow the calling function to handle it
+      }}
 
+// getAllUsersAPI
+export const getAllUsersAPI = async () => {
+  try {
+    // Making a GET request to the '/api/users' endpoint
+    const response = await commonAPI('get', `${serverURL}/api/users`, null);
+    return response; // Return the response so the calling function can handle it
+    } catch (error) {
+      // Handle any errors that occur during the request
+      console.error('Error fetching all users:', error);
+      throw error; // Rethrow the error to allow the calling function to handle it
+    }}

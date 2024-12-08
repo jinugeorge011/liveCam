@@ -16,6 +16,7 @@ import Profile from "./pages/Profile.jsx";
 import Payment from "./pages/Payment.jsx";
 import Header from "./components/Header.jsx";
 import ChatAndVideoSection from "./pages/ChatAndVideoSection.jsx";
+import Users from "./components/admin/Users/Users.jsx";
 
 const App = () => {
 
@@ -25,9 +26,11 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<Auth register={true} />} />
+        <Route path="/users" element={<Users />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/contacts" element={<Contact />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/chat" element={<ChatAndVideoSection />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/dashboard" element={<UserDashboard />} />
@@ -50,6 +53,14 @@ const App = () => {
           element={
             <RoleBasedRoute requiredRole="admin">
               <AdminDashboard />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admindashboard/users"
+          element={
+            <RoleBasedRoute requiredRole="admin">
+              <Users/>
             </RoleBasedRoute>
           }
         />
