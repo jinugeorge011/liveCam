@@ -19,14 +19,16 @@ const ChatAndVideoSection = ({ user }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [videoFilter, setVideoFilter] = useState(null);
 
-
   const myVideo = useRef();
-  const isLoggedIn = !!sessionStorage.getItem('token');
   const otherVideo = useRef();
   const chatEndRef = useRef(null);
-  const peerConnection = useRef(new RTCPeerConnection({
-    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-  }));
+  const peerConnection = useRef(
+    new RTCPeerConnection({
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+    })
+  );
+
+  const isLoggedIn = !!sessionStorage.getItem('token');
 
   const handleEmojiClick = (emojiObject) => {
     setNewMessage((prevMessage) => prevMessage + emojiObject.emoji);
@@ -41,14 +43,18 @@ const ChatAndVideoSection = ({ user }) => {
     socket.on('connect', () => console.log(`Connected with ID: ${socket.id}`));
 
     socket.on('offer', async (data) => {
-      await peerConnection.current.setRemoteDescription(new RTCSessionDescription(data.offer));
+      await peerConnection.current.setRemoteDescription(
+        new RTCSessionDescription(data.offer)
+      );
       const answer = await peerConnection.current.createAnswer();
       await peerConnection.current.setLocalDescription(answer);
       socket.emit('answer', { answer, to: data.from });
     });
 
     socket.on('answer', async (data) => {
-      await peerConnection.current.setRemoteDescription(new RTCSessionDescription(data.answer));
+      await peerConnection.current.setRemoteDescription(
+        new RTCSessionDescription(data.answer)
+      );
     });
 
     socket.on('ice-candidate', (data) => {
@@ -76,14 +82,16 @@ const ChatAndVideoSection = ({ user }) => {
 
   const startVideoStream = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: isVideoEnabled, 
-        audio: isAudioEnabled 
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: isVideoEnabled,
+        audio: isAudioEnabled,
       });
 
       myVideo.current.srcObject = stream;
 
-      stream.getTracks().forEach(track => peerConnection.current.addTrack(track, stream));
+      stream.getTracks().forEach((track) =>
+        peerConnection.current.addTrack(track, stream)
+      );
 
       peerConnection.current.ontrack = ({ streams: [remoteStream] }) => {
         otherVideo.current.srcObject = remoteStream;
@@ -110,6 +118,69 @@ const ChatAndVideoSection = ({ user }) => {
     const offer = await peerConnection.current.createOffer();
     await peerConnection.current.setLocalDescription(offer);
     socket.emit('offer', { offer, to: userId });
+  };
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (newMessage.trim()) {
+      const messageData = {
+        id: Date.now(),
+        sender: user ? user.name : 'Guest',
+        content: newMessage,
+      };
+      socket.emit('chat-message', messageData);
+      setMessages([...messages, messageData]);
+      setNewMessage('');
+    }
+  };
+
+  const endChat = () => {
+    setIsJoined(false);
+    setRoomId('');
+    setOtherUserId('');
+    setMessages([]);
+    setNewMessage('');
+
+    if (myVideo.current.srcObject) {
+      myVideo.current.srcObject.getTracks().forEach((track) => track.stop());
+      myVideo.current.srcObject = null;
+    }
+
+    if (otherVideo.current.srcObject) {
+      otherVideo.current.srcObject.getTracks().forEach((track) => track.stop());
+      otherVideo.current.srcObject = null;
+    }
+
+    peerConnection.current.close();
+    peerConnection.current = new RTCPeerConnection({
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+    });
+
+    socket.emit('leave-room', roomId);
+  };
+
+  const toggleVideo = () => {
+    const stream = myVideo.current.srcObject;
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        if (track.kind === 'video') {
+          track.enabled = !track.enabled;
+          setIsVideoEnabled(track.enabled);
+        }
+      });
+    }
+  };
+
+  const toggleAudio = () => {
+    const stream = myVideo.current.srcObject;
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        if (track.kind === 'audio') {
+          track.enabled = !track.enabled;
+          setIsAudioEnabled(track.enabled);
+        }
+      });
+    }
   };
 
   const uploadFile = async () => {
@@ -140,78 +211,15 @@ const ChatAndVideoSection = ({ user }) => {
     }
   };
 
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (newMessage.trim()) {
-      const messageData = {
-        id: Date.now(),
-        sender: user ? user.name : 'Guest',
-        content: newMessage,
-      };
-      socket.emit('chat-message', messageData);
-      setMessages([...messages, messageData]);
-      setNewMessage('');
-    }
-  };
-
-  const endChat = () => {
-    setIsJoined(false);
-    setRoomId('');
-    setOtherUserId('');
-    setMessages([]);
-    setNewMessage('');
-
-    if (myVideo.current.srcObject) {
-      myVideo.current.srcObject.getTracks().forEach(track => track.stop());
-      myVideo.current.srcObject = null;
-    }
-
-    if (otherVideo.current.srcObject) {
-      otherVideo.current.srcObject.getTracks().forEach(track => track.stop());
-      otherVideo.current.srcObject = null;
-    }
-
-    peerConnection.current.close();
-    peerConnection.current = new RTCPeerConnection({
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-    });
-
-    socket.emit('leave-room', roomId);
-  };
-
-  const toggleVideo = () => {
-    const stream = myVideo.current.srcObject;
-    if (stream) {
-      stream.getTracks().forEach(track => {
-        if (track.kind === 'video') {
-          track.enabled = !track.enabled;
-          setIsVideoEnabled(track.enabled);
-        }
-      });
-    }
-  };
-
-  const toggleAudio = () => {
-    const stream = myVideo.current.srcObject;
-    if (stream) {
-      stream.getTracks().forEach(track => {
-        if (track.kind === 'audio') {
-          track.enabled = !track.enabled;
-          setIsAudioEnabled(track.enabled);
-        }
-      });
-    }
-  };
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const toggleFilter = (filter) => {
     if (myVideo.current) {
       myVideo.current.style.filter = filter;
     }
   };
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
 
   return (

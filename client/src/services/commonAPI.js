@@ -1,35 +1,42 @@
 import axios from 'axios';
 
-// Set default headers for Axios globally
+// Set global defaults for Axios
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-export const commonAPI = async (httpMethod, url, reqBody = null, token = null) => {
+// CommonAPI function
+const commonAPI = async (method, url, body = null, token = null) => {
   try {
+    // Prepare headers
     const headers = {
       ...axios.defaults.headers.common,
       ...(token ? { Authorization: `Bearer ${token}` } : {}), // Add token if provided
     };
 
-    const response = await axios({
-      method: httpMethod,
-      url,
-      data: httpMethod !== 'get' ? reqBody : null, // Include body only for non-GET requests
-      headers,
-    });
+    // Prepare request options
+    const options = {
+      method,       // HTTP method (GET, POST, PUT, DELETE, etc.)
+      url,          // API endpoint
+      headers,      // Request headers
+      ...(body ? { data: body } : {}), // Include body for non-GET methods
+    };
 
+    // Execute the API call
+    const response = await axios(options);
+
+    // Return a standardized response
     return {
       success: true,
       status: response.status,
       data: response.data,
     };
   } catch (error) {
-    // Log detailed error information
     console.error('API Error:', error.response || error.message || error);
 
+    // Prepare error response
     const errorResponse = error.response
       ? {
           status: error.response.status,
-          message: error.response.data.message || 'An error occurred',
+          message: error.response.data?.message || 'An error occurred',
           data: error.response.data,
         }
       : {
