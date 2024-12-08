@@ -5,8 +5,9 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const router = require('./routes/router');
 const applicationMiddleware = require('./middleware/applicationMiddleware');
-const socketConfig = require('./socketServer');
+const { Server } = require('socket.io');
 const upload = require('./config/uploadConfig');
+const socketServer = require('./socketServer');
 
 // const multer = require('multer');
 // const path = require('./uploads');
@@ -57,9 +58,16 @@ connectDB();
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
-// Configure Socket.IO
-const io = socketConfig(server);
+// Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: '*', // Allow cross-origin requests (configure for security in production)
+    methods: ['GET', 'POST'],
+  },
+});
 
+// Setup Socket.IO
+socketServer(io);
 
 // Handle file uploads
 app.post('/upload', upload.single('file'), (req, res) => {

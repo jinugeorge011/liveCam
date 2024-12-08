@@ -40,16 +40,16 @@ export const getUserDetailsAPI = async (token) => {
     throw error; // Rethrow the error to allow the calling function to handle it
   }
 };
-// socket.io
-export const socketioAPI = async (token) => {
-  try {
-    const response = await commonAPI('get', `${serverURL}/api/socket`, null, token);
-    return response;
-  } catch (error) {
-    console.error('Error getting socket.io connection:', error);
-    throw error;
-  }
-};
+// // socket.io
+// export const socketioAPI = async (token) => {
+//   try {
+//     const response = await commonAPI('get', `${serverURL}/api/socket`, null, token);
+//     return response;
+//   } catch (error) {
+//     console.error('Error getting socket.io connection:', error);
+//     throw error;
+//   }
+// };
 
 
 //updateUserDetailsAPI
