@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import './ChatAndVideoSection.css';
 
-const socket = io.connect('http://localhost:5000');
+const socket = io.connect('https://livecam-7fzf.onrender.com');
 
 const ChatAndVideoSection = ({ user }) => {
   const [roomId, setRoomId] = useState('');
