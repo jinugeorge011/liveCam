@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import DarkModeSwitcher from './DarkModeSwitcher';
 
 
@@ -25,7 +25,7 @@ function Header({ users }) {
   return (
     <nav className="sticky top-0 z-50 flex justify-between items-center p-4 border-2 border-dashed border-black dark:border-white bg-white shadow-lg text-black dark:bg-purple-950 dark:text-white">
       <div className="text-2xl font-bold">
-        <h2 className='ms-5'>ChatWave</h2>
+        <h2 className='ms-5'>KILI</h2>
       </div>
       
       {/* Nav Links */}
@@ -66,6 +66,13 @@ function Header({ users }) {
     />
     {isMenuOpen && (
       <div className="absolute right-0 mt-2 w-32 rounded-lg shadow-lg z-10">
+        <Link to="/profile">
+        <button
+        className="bg-purple-800 ml-2 mr-2 text-white border border-blue-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
+        >
+          Profile
+        </button>
+        </Link>
          <button
          className="bg-red-700 ml-2 mr-2 text-white border border-blue-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-300 group"
            onClick={handleLogout}> Logout</button>
