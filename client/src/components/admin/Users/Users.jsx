@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto'; // Required for Chart.js to work
-import { fetchUserStatsAPI, getAllUsersAPI } from '../services/adminAPIs'; // Example APIs
+import { fetchUserStatsAPI, getAllUsersAPI } from '../../../services/allAPIs'; // Example APIs
 
 const Users = () => {
   const [userStats, setUserStats] = useState(null); // Data for the chart
