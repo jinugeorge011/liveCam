@@ -26,12 +26,12 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<Auth register={true} />} />
-        {/* <Route path="/users" element={<Users />} /> */}
+        <Route path="/users" element={<Users />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/contacts" element={<Contact />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/chat" element={<ChatAndVideoSection />} />
+        <Route path="/chat" element={<ChatAndVideoSection user={loggedInUser} />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
