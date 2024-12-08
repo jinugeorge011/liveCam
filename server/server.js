@@ -61,7 +61,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: '*', // Allow cross-origin requests (configure for security in production)
+    origin: 'https://livecam-7fzf.onrender.com', // Allow cross-origin requests (configure for security in production)
     methods: ['GET', 'POST'],
   },
 });

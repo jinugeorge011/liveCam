@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { getUserDetailsAPI, updateUserDetailsAPI } from '../services/allAPIs';
 import { useAuth } from '../context/AuthContext';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const Profile = () => {
-  const { token, user, setUser } = useAuth(); // Example using Context for token and user
+  const { token, user, setUser } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    bio: '',
-    profileImage: '', // New field for the profile image
+    username: user?.username || '',
+    email: user?.email || '',
+    bio: user?.bio || 'No bio provided.',
+    profileImage: user?.profileImage || '',
   });
-  const [previewImage, setPreviewImage] = useState(null); // Preview for image upload
+  const [previewImage, setPreviewImage] = useState(user?.profileImage || null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Fetch user details when the component mounts
+
   useEffect(() => {
-    if (token) {
+    if (token && !user) {
       const fetchUserDetails = async () => {
         try {
           const userDetails = await getUserDetailsAPI(token);
+          setUser(userDetails); // Save user to context
           setFormData({
             username: userDetails.username,
             email: userDetails.email,
@@ -33,7 +37,10 @@ const Profile = () => {
       };
       fetchUserDetails();
     }
-  }, [token]);
+  }, [token, user]);
+  
+
+  const isLoggedIn = !!sessionStorage.getItem('token');
 
   // Handle form changes
   const handleChange = (e) => {
@@ -55,7 +62,7 @@ const Profile = () => {
     e.preventDefault();
     setMessage('');
     setLoading(true);
-
+  
     try {
       // Prepare form data for submission
       const formDataToSend = new FormData();
@@ -65,7 +72,7 @@ const Profile = () => {
       if (formData.profileImage instanceof File) {
         formDataToSend.append('profileImage', formData.profileImage);
       }
-
+  
       const updatedUser = await updateUserDetailsAPI(formDataToSend, token);
       setUser(updatedUser); // Update the user state after successful update
       setMessage('Profile updated successfully!');
@@ -75,11 +82,14 @@ const Profile = () => {
       setLoading(false);
     }
   };
+  
 
   return (
-    <div className="min-h-screen bg-purple-50 flex flex-col items-center py-10">
+    <>
+    <Header users={isLoggedIn ? true : false} />
+    <div className="min-h-screen dark:bg-purple-900 flex flex-col items-center py-10">
       {/* Profile Card */}
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+      <div className="bg-white border-dashed border-black dark:border-white rounded-lg shadow-lg w-full max-w-3xl p-6">
         <div className="flex items-center justify-between border-b pb-4">
           <h2 className="text-2xl font-semibold text-purple-800">My Profile</h2>
         </div>
@@ -174,6 +184,8 @@ const Profile = () => {
         </form>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 

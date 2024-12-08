@@ -7,9 +7,7 @@ const UserSchema = new mongoose.Schema(
     email: { type: String},
     password: { type: String },
     role : { type: String, default: "user" },
-    github: { type: String },
-    linkedIn: { type: String},
-    profilePic: { type: String},
+    profileImage: { type: String},
   },
   { timestamps: true }
 );
