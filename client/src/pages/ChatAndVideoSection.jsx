@@ -119,7 +119,7 @@ const ChatAndVideoSection = ({ user }) => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('http://localhost:5000/upload', {
+      const response = await fetch('https://livecam-7fzf.onrender.com', {
         method: 'POST',
         body: formData,
       });
