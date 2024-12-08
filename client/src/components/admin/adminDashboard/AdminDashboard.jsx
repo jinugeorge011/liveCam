@@ -35,10 +35,10 @@ const AdminDashboard = () => {
             <Link to="/admindashboard/users" className="text-lg hover:text-teal-400 transition">
               Users
             </Link>
-            <Link to="/admin/meetings" className="text-lg hover:text-teal-400 transition">
+            <Link to="/admindashboard/meetings" className="text-lg hover:text-teal-400 transition">
               Meetings
             </Link>
-            <Link to="/admin/settings" className="text-lg hover:text-teal-400 transition">
+            <Link to="/admindashboard/settings" className="text-lg hover:text-teal-400 transition">
               Settings
             </Link>
           </nav>
