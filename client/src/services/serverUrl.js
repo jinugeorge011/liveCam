@@ -1,1 +1,1 @@
-export const serverURL ="http://localhost:5000"
+export const serverURL ="https://livecam-7fzf.onrender.com"
