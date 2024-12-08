@@ -15,7 +15,7 @@ import Settings from "./pages/Settings.jsx";
 import Profile from "./pages/Profile.jsx";
 import Payment from "./pages/Payment.jsx";
 import Header from "./components/Header.jsx";
-import ChatAndVideoSection from "./pages/Chat.jsx";
+import ChatAndVideoSection from "./pages/ChatAndVideoSection.jsx";
 
 const App = () => {
 
