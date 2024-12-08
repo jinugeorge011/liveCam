@@ -1,10 +1,25 @@
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
 const { Server } = require('socket.io');
-const upload = require('./config/uploadConfig'); // Import the upload configuration
+const multer = require('multer'); // Import multer directly for simplicity
 
 const basePath = path.join(__dirname, 'uploads');
+
+// Multer configuration
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      const roomPath = path.join(basePath, req.body.roomId || 'default');
+      if (!fs.existsSync(roomPath)) {
+        fs.mkdirSync(roomPath, { recursive: true });
+      }
+      cb(null, roomPath);
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}-${file.originalname}`);
+    },
+  }),
+});
 
 module.exports = (server) => {
   const io = new Server(server, { cors: { origin: '*' } });
@@ -13,17 +28,12 @@ module.exports = (server) => {
   io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    // Join Room
     socket.on('join-room', ({ roomId, username }) => {
       if (!roomId) return;
 
       username = username || `User-${socket.id}`;
       socket.data.username = username;
-
-      // Create a folder for the room
-      const roomPath = path.join(basePath, roomId);
-      if (!fs.existsSync(roomPath)) {
-        fs.mkdirSync(roomPath);
-      }
 
       socket.join(roomId);
       if (!rooms[roomId]) rooms[roomId] = { sockets: [] };
@@ -35,36 +45,44 @@ module.exports = (server) => {
       });
     });
 
+    // File Upload
     socket.on('upload-file', (data) => {
       const { roomId, file } = data;
+      const roomPath = path.join(basePath, roomId);
 
-      // Use multer to handle file storage
-      upload.single('file')(data, (err) => {
+      if (!fs.existsSync(roomPath)) {
+        fs.mkdirSync(roomPath, { recursive: true });
+      }
+
+      const filename = `${Date.now()}-${file.originalname}`;
+      const filePath = path.join(roomPath, filename);
+
+      // Simulate file saving
+      fs.writeFileSync(filePath, file.buffer, (err) => {
         if (err) {
           console.error('File upload error:', err.message);
           socket.emit('file-upload-error', { message: 'File upload failed', error: err.message });
           return;
         }
+        console.log('File saved:', filename);
 
-        // Emit success event with the file information
         socket.to(roomId).emit('file-upload-success', {
-          filename: file.filename,
-          filePath: `/uploads/${roomId}/${file.filename}`
+          filename,
+          filePath: `/uploads/${roomId}/${filename}`,
         });
       });
     });
 
+    // Disconnect
     socket.on('disconnect', () => {
       console.log(`User disconnected: ${socket.id}`);
       for (const roomId of Object.keys(socket.rooms)) {
         if (roomId !== socket.id) {
-          // Remove the socket ID from the room's list
           rooms[roomId].sockets = rooms[roomId].sockets.filter((id) => id !== socket.id);
 
-          // Delete the room folder if no users are left in the room
           if (rooms[roomId].sockets.length === 0) {
             const roomPath = path.join(basePath, roomId);
-            fs.rmdirSync(roomPath, { recursive: true });
+            fs.rmSync(roomPath, { recursive: true, force: true });
             delete rooms[roomId];
           }
 
