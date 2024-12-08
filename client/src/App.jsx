@@ -19,6 +19,7 @@ import ChatAndVideoSection from "./pages/ChatAndVideoSection.jsx";
 import Users from "./components/admin/Users/Users.jsx";
 
 const App = () => {
+  const loggedInUser = { name: 'Jinu' };
 
   return (
     <AuthProvider>
