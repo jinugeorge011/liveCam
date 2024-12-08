@@ -8,7 +8,6 @@ import "./index.css";
 import LandingPage from "./pages/LandingPage.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import Auth from "./pages/Auth.jsx";
-import ChatSection from "./pages/Chat.jsx";
 import Contact from "./pages/Contact.jsx";
 import UserDashboard from "./pages/Dashboard/UserDashboard.jsx";
 import AdminDashboard from "./components/admin/adminDashboard/AdminDashboard.jsx";
@@ -16,6 +15,7 @@ import Settings from "./pages/Settings.jsx";
 import Profile from "./pages/Profile.jsx";
 import Payment from "./pages/Payment.jsx";
 import Header from "./components/Header.jsx";
+import ChatAndVideoSection from "./pages/Chat.jsx";
 
 const App = () => {
 
@@ -28,7 +28,7 @@ const App = () => {
         <Route path="/login" element={<Auth />} />
         <Route path="/contacts" element={<Contact />} />
         <Route path="/payment" element={<Payment />} />
-        <Route path="/chat" element={<ChatSection />} />
+        <Route path="/chat" element={<ChatAndVideoSection />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
