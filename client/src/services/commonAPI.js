@@ -1,49 +1,35 @@
 import axios from 'axios';
 
-// Set global defaults for Axios
+// Set default headers for Axios globally
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-/**
- * CommonAPI function for making HTTP requests
- * @param {string} method - HTTP method (GET, POST, PUT, DELETE, etc.)
- * @param {string} url - API endpoint
- * @param {Object|null} body - Request body (optional)
- * @param {string|null} token - Bearer token for authorization (optional)
- * @returns {Promise<Object>} - Standardized response object
- */
-const commonAPI = async (method, url, body = null, token = null) => {
+export const commonAPI = async (httpMethod, url, reqBody = null, token = null) => {
   try {
-    // Prepare headers
     const headers = {
-      'Content-Type': 'application/json',
+      ...axios.defaults.headers.common,
       ...(token ? { Authorization: `Bearer ${token}` } : {}), // Add token if provided
     };
 
-    // Prepare request options
-    const options = {
-      method: method.toUpperCase(), // Ensure method is uppercase
-      url, // API endpoint
-      headers, // Request headers
-      ...(body && !['GET', 'DELETE'].includes(method.toUpperCase()) ? { data: body } : {}), // Include body for non-GET/DELETE methods
-    };
+    const response = await axios({
+      method: httpMethod,
+      url,
+      data: httpMethod !== 'get' ? reqBody : null, // Include body only for non-GET requests
+      headers,
+    });
 
-    // Execute the API call
-    const response = await axios(options);
-
-    // Return a standardized response
     return {
       success: true,
       status: response.status,
       data: response.data,
     };
   } catch (error) {
+    // Log detailed error information
     console.error('API Error:', error.response || error.message || error);
 
-    // Prepare error response
     const errorResponse = error.response
       ? {
           status: error.response.status,
-          message: error.response.data?.message || 'An error occurred',
+          message: error.response.data.message || 'An error occurred',
           data: error.response.data,
         }
       : {
