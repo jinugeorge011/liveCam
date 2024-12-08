@@ -1,0 +1,27 @@
+@keyframes rainbowFlow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+  
+  @keyframes disco {
+    0% { filter: hue-rotate(0deg); }
+    25% { filter: hue-rotate(90deg); }
+    50% { filter: hue-rotate(180deg); }
+    75% { filter: hue-rotate(270deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+  
+  @keyframes ghostEffect {
+    0% { opacity: 1; transform: translate(0, 0); }
+    50% { opacity: 0.5; transform: translate(10px, 10px); }
+    100% { opacity: 0; transform: translate(20px, 20px); }
+  }
+  
+  @keyframes glitch {
+    0% { transform: skewX(0deg); filter: hue-rotate(0deg); }
+    25% { transform: skewX(10deg); filter: hue-rotate(60deg); }
+    50% { transform: skewX(-10deg); filter: hue-rotate(120deg); }
+    75% { transform: skewX(5deg); filter: hue-rotate(180deg); }
+    100% { transform: skewX(0deg); filter: hue-rotate(0deg); }
+  }
+  

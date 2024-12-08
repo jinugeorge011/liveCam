@@ -1,0 +1,13 @@
+/* frontend/src/App.css */
+.video-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  video {
+    width: 300px;
+    margin: 10px;
+    border-radius: 10px;
+    background-color: black;
+  }
