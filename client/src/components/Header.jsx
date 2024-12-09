@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import DarkModeSwitcher from './DarkModeSwitcher';
 import logomain from '../Images/Logo-Main.png'
-import Chatbot from './ChatBot';
 
 
 function Header({ users }) {
@@ -92,9 +91,6 @@ function Header({ users }) {
   </NavLink>
 )}
 
-<div>
-  <Chatbot/>
-</div>
         {/* Dark Mode Switcher */}
         <div className="mt-1">
           <DarkModeSwitcher />
