@@ -3,6 +3,7 @@
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import pwd from '../assets/react.svg'
+import logotr from '../Images/logotr.png'
 
 const Footer = () => {
   return (
@@ -51,6 +52,7 @@ const Footer = () => {
                 <FaLinkedinIn size={20} />
               </a>
             </div>
+            <img src={logotr} className='mt-3 w-24 h-16' alt="logo" />
           </div>
         </div>
 
