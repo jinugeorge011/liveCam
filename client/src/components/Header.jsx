@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import DarkModeSwitcher from './DarkModeSwitcher';
 import logomain from '../Images/Logo-Main.png'
-import simplepic from '../Images/simplepic.jpeg'
 
 
 function Header({ users }) {
@@ -63,7 +62,7 @@ function Header({ users }) {
 {users ? (
   <div className="relative">
     <img
-      src={users.profileImage || simplepic}
+      src={isLoggedIn ? users.profileImage :'😊'}
       alt="User Profile"
       className="w-9 h-9 rounded-full cursor-pointer"
       onClick={() => setIsMenuOpen(!isMenuOpen)}
