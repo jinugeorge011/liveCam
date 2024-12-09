@@ -27,7 +27,6 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<Auth register={true} />} />
-        <Route path="/users" element={<Users />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/contacts" element={<Contact />} />
         <Route path="/payment" element={<Payment />} />
