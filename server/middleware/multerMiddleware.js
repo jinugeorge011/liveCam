@@ -1,27 +1,35 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const util = require('util');
+
+// Promisify fs.mkdir for better async handling
+const mkdir = util.promisify(fs.mkdir);
 
 // Configure Multer storage
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '..', 'uploads');
-    
-    // Ensure the upload directory exists
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+  destination: async (req, file, cb) => {
+    try {
+      const uploadPath = path.join(__dirname, '..', 'uploads');
+      
+      // Ensure the upload directory exists asynchronously
+      if (!fs.existsSync(uploadPath)) {
+        await mkdir(uploadPath, { recursive: true });
+      }
+
+      // Create subdirectory based on request (roomId or default)
+      const subdirectory = req.body.roomId || 'default'; 
+      const subdirectoryPath = path.join(uploadPath, subdirectory);
+
+      // Ensure the subdirectory exists
+      if (!fs.existsSync(subdirectoryPath)) {
+        await mkdir(subdirectoryPath, { recursive: true });
+      }
+
+      cb(null, subdirectoryPath);  // Set the directory to save the file
+    } catch (error) {
+      cb(error);  // If there was an error creating directories, pass it to the callback
     }
-
-    // Optionally, create a dynamic subdirectory based on request (e.g., user ID or room)
-    const subdirectory = req.body.roomId || 'default';  // Example: using roomId or fallback to 'default'
-    const subdirectoryPath = path.join(uploadPath, subdirectory);
-
-    // Ensure the subdirectory exists
-    if (!fs.existsSync(subdirectoryPath)) {
-      fs.mkdirSync(subdirectoryPath, { recursive: true });
-    }
-
-    cb(null, subdirectoryPath);  // Set the directory to save the file
   },
   filename: (req, file, cb) => {
     // Use timestamp and original filename for unique naming
@@ -40,15 +48,6 @@ const upload = multer({
     }
     cb(null, true);
   },
-});
-
-// Error handling middleware
-upload.array('files')  // Assuming multiple files in the form
-  .use((err, req, res, next) => {
-    if (err) {
-      return res.status(400).json({ message: err.message });
-    }
-    next();
-  });
+}).single('file');  // Assuming you're uploading a single file, change as needed
 
 module.exports = upload;
