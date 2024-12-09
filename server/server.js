@@ -8,6 +8,8 @@ const applicationMiddleware = require('./middleware/applicationMiddleware');
 const { Server } = require('socket.io');
 const upload = require('./config/uploadConfig');
 const socketServer = require('./socketServer');
+const allowedOrigins = ["https://chatwave8787.netlify.app"];
+
 
 // const multer = require('multer');
 // const path = require('./uploads');
@@ -61,8 +63,15 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: 'https://livecam-7fzf.onrender.com', // Allow cross-origin requests (configure for security in production)
-    methods: ['GET', 'POST'],
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
