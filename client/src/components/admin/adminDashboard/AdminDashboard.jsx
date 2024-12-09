@@ -29,16 +29,16 @@ const AdminDashboard = () => {
         <aside className="w-1/4 bg-gray-500 text-white dark:bg-gray-700 p-5">
           <h2 className="text-2xl font-bold text-white mb-8">Admin Dashboard</h2>
           <nav className="flex flex-col space-y-4">
-            <Link to="/admin/overview" className="text-lg hover:text-teal-400 transition">
+            <Link to="/overview" className="text-lg hover:text-teal-400 transition">
               Overview
             </Link>
-            <Link to="/admindashboard/users" className="text-lg hover:text-teal-400 transition">
+            <Link to="/users" className="text-lg hover:text-teal-400 transition">
               Users
             </Link>
-            <Link to="/admindashboard/meetings" className="text-lg hover:text-teal-400 transition">
+            <Link to="/meetings" className="text-lg hover:text-teal-400 transition">
               Meetings
             </Link>
-            <Link to="/admindashboard/settings" className="text-lg hover:text-teal-400 transition">
+            <Link to="/settings" className="text-lg hover:text-teal-400 transition">
               Settings
             </Link>
           </nav>

@@ -17,6 +17,7 @@ import Payment from "./pages/Payment.jsx";
 import Header from "./components/Header.jsx";
 import ChatAndVideoSection from "./pages/ChatAndVideoSection.jsx";
 import Users from "./components/admin/Users/Users.jsx";
+import AdminOverview from "./components/admin/Overview/Overview.jsx";
 
 const App = () => {
 
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<Auth register={true} />} />
         <Route path="/login" element={<Auth />} />
+        <Route path="/users" element={<Users/>}/>
         <Route path="/contacts" element={<Contact />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/profile" element={<Profile />} />
@@ -34,6 +36,7 @@ const App = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/overview" element={<AdminOverview/>}/>
         <Route path="/*" element={<ErrorPage />} />
 
         {/* User-Specific Routes */}
@@ -64,10 +67,18 @@ const App = () => {
           }
         />
         <Route
-          path="/admindashboard/users"
+          path="/users"
           element={
             <RoleBasedRoute requiredRole="admin">
               <Users/>
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/overview"
+          element={
+            <RoleBasedRoute requiredRole="admin">
+              <AdminOverview/>
             </RoleBasedRoute>
           }
         />
