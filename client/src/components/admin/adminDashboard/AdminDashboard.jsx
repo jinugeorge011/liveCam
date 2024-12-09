@@ -35,8 +35,8 @@ const AdminDashboard = () => {
             <Link to="/users" className="text-lg hover:text-teal-400 transition">
               Users
             </Link>
-            <Link to="/meetings" className="text-lg hover:text-teal-400 transition">
-              Meetings
+            <Link to="/chat" className="text-lg hover:text-teal-400 transition">
+              Chat
             </Link>
             <Link to="/settings" className="text-lg hover:text-teal-400 transition">
               Settings
