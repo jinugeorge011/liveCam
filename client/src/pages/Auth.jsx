@@ -93,16 +93,19 @@ function Auth({ register }) {
         throw new Error("Unexpected response from server.");
       }
     } catch (error) {
-      // Extract error message or use a default
+      // Log detailed error information for debugging
+      console.error("Login Error:", error.response || error.message || error);
+    
+      // Extract a user-friendly error message or provide a default fallback
       const errorMessage =
-        error.response?.data?.message || "An error occurred during login.";
-  
-      // Show error toast notification
+        error.response?.data?.message || "An unexpected error occurred. Please try again.";
+    
+      // Display the error message using a toast notification
       toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
         theme: "dark",
-      });
+      });    
     } finally {
       setLoading(false); // Reset loading state
     }
@@ -126,7 +129,7 @@ function Auth({ register }) {
           className="absolute top-0 left-0 w-full h-full bg-black object-cover z-[-1]" 
         />
         <StyledWrapper>
-          <div className="form-container border-2 border-dashed border-black dark:border-white">
+          <div className="form-container border-2 border-dashed border-white">
             <p className="title">{register ? "Sign Up" : "Login"}</p>
             {register && (
               <div className="input-group">

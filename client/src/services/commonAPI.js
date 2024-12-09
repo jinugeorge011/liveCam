@@ -10,27 +10,29 @@ export const commonAPI = async (httpMethod, url, reqBody = null, token = null) =
       ...(token ? { Authorization: `Bearer ${token}` } : {}), // Add token if provided
     };
 
+    // Axios request configuration
     const response = await axios({
       method: httpMethod,
       url,
-      data: httpMethod !== 'get' ? reqBody : null, // Include body only for non-GET requests
+      data: ['post', 'put', 'patch', 'delete'].includes(httpMethod.toLowerCase()) ? reqBody : null,
       headers,
     });
 
+    // Return a standardized success response
     return {
       success: true,
       status: response.status,
       data: response.data,
     };
   } catch (error) {
-    // Log detailed error information
     console.error('API Error:', error.response || error.message || error);
 
+    // Standardized error response
     const errorResponse = error.response
       ? {
           status: error.response.status,
-          message: error.response.data.message || 'An error occurred',
-          data: error.response.data,
+          message: error.response.data?.message || 'An error occurred',
+          data: error.response.data || {},
         }
       : {
           status: 500,

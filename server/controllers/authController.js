@@ -82,8 +82,18 @@ exports.login = async (req, res) => {
       token: token,  // Include the token in the response
       user: { id: user._id, username: user.username, email: user.email },
     });
-  } catch (error) {
-    console.error("Login error:", error.message);
+  }catch (error) {
+    console.error("Login error:", error.message || error);
+  
+    // Handle known errors with proper status codes
+    if (error.response && error.response.status) {
+      return res.status(error.response.status).json({
+        error: error.response.data?.message || "An error occurred during login.",
+      });
+    }
+  
+    // Default fallback for unexpected errors
     res.status(500).json({ error: "Internal server error" });
   }
+  
 };
