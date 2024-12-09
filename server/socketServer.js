@@ -9,10 +9,7 @@ const basePath = path.join(__dirname, 'uploads');
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      const roomPath = path.join(basePath, req.body.roomId || 'default');
-      if (!fs.existsSync(roomPath)) {
-        fs.mkdirSync(roomPath, { recursive: true });
-      }
+      const roomPath = ensureRoomDirectoryExists(req.body.roomId || 'default');
       cb(null, roomPath);
     },
     filename: (req, file, cb) => {
@@ -20,6 +17,15 @@ const upload = multer({
     },
   }),
 });
+
+// Helper function to ensure the room directory exists
+const ensureRoomDirectoryExists = (roomId) => {
+  const roomPath = path.join(basePath, roomId);
+  if (!fs.existsSync(roomPath)) {
+    fs.mkdirSync(roomPath, { recursive: true });
+  }
+  return roomPath;
+};
 
 module.exports = (server) => {
   const io = new Server(server, { cors: { origin: '*' } });
@@ -48,17 +54,13 @@ module.exports = (server) => {
     // File Upload
     socket.on('upload-file', (data) => {
       const { roomId, file } = data;
-      const roomPath = path.join(basePath, roomId);
-
-      if (!fs.existsSync(roomPath)) {
-        fs.mkdirSync(roomPath, { recursive: true });
-      }
+      const roomPath = ensureRoomDirectoryExists(roomId);
 
       const filename = `${Date.now()}-${file.originalname}`;
       const filePath = path.join(roomPath, filename);
 
-      // Simulate file saving
-      fs.writeFileSync(filePath, file.buffer, (err) => {
+      // Save file asynchronously
+      fs.writeFile(filePath, file.buffer, (err) => {
         if (err) {
           console.error('File upload error:', err.message);
           socket.emit('file-upload-error', { message: 'File upload failed', error: err.message });
@@ -82,7 +84,9 @@ module.exports = (server) => {
 
           if (rooms[roomId].sockets.length === 0) {
             const roomPath = path.join(basePath, roomId);
-            fs.rmSync(roomPath, { recursive: true, force: true });
+            if (fs.existsSync(roomPath)) {
+              fs.rmSync(roomPath, { recursive: true, force: true });
+            }
             delete rooms[roomId];
           }
 
