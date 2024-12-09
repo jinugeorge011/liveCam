@@ -40,7 +40,7 @@ const storage = multer.diskStorage({
 // Multer instance with validation
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
     if (!allowedTypes.includes(file.mimetype)) {
@@ -48,6 +48,6 @@ const upload = multer({
     }
     cb(null, true);
   },
-}).single('file');  // Assuming you're uploading a single file, change as needed
+});
 
 module.exports = upload;

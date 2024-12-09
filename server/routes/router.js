@@ -24,8 +24,10 @@ router.post('/api/login', asyncHandler(authController.login));
 // Single file upload
 router.post('/api/upload', upload.single('file'), (req, res) => {
   try {
-    const fileUrl = `/uploads/${req.file.filename}`;
-    res.status(200).json({ message: 'File uploaded successfully', fileUrl });
+    res.json({
+      message: 'File uploaded successfully!',
+      fileUrl: `/uploads/${req.file.filename}`,
+    });
   } catch (error) {
     res.status(500).json({ message: 'File upload failed', error: error.message });
   }
