@@ -118,7 +118,7 @@ function Auth({ register }) {
       <ToastContainer />
       <div className="bg-blue-950 h-screen flex items-center justify-center">
         <StyledWrapper>
-          <div className="form-container">
+          <div className="form-container border-2 border-dashed border-black dark:border-white">
             <p className="title">{register ? "Sign Up" : "Login"}</p>
             {register && (
               <div className="input-group">
@@ -210,7 +210,6 @@ function Auth({ register }) {
 const StyledWrapper = styled.div`
   display: flex;
   justify-content: center;
-
   .form-container {
     width: 350px;
     border-radius: 0.75rem;
