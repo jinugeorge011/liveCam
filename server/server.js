@@ -60,12 +60,6 @@ const io = new Server(server, {
 // Setup Socket.IO event handling
 socketServer(io);
 
-// Error handling middleware (for unhandled errors)
-app.use((err, req, res, next) => {
-  console.error(err.message);
-  res.status(500).json({ error: err.message });
-});
-
 // Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, '0.0.0.0', () => {
