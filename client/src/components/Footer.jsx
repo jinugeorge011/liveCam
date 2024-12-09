@@ -52,7 +52,7 @@ const Footer = () => {
                 <FaLinkedinIn size={20} />
               </a>
             </div>
-            <img src={logotr} className='mt-3 w-24 h-16' alt="logo" />
+            <img src={logotr} className='mt-3 w-32' alt="logo" />
           </div>
         </div>
 

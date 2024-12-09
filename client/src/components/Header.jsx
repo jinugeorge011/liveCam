@@ -26,7 +26,7 @@ function Header({ users }) {
   return (
     <nav className="sticky top-0 z-50 flex justify-between items-center p-4 border-2 border-dashed border-black dark:border-white bg-white shadow-lg text-black dark:bg-purple-950 dark:text-white">
       <div className="text-2xl font-bold">
-        <img src={logomain} className='w-fit ms-5' alt="Logo" />
+        <img src={logomain} className='w-36 ms-5' alt="Logo" />
         {/* <h2 className='ms-5'>KILI</h2> */}
       </div>
       
