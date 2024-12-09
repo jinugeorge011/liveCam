@@ -8,6 +8,7 @@ import './ChatAndVideoSection.css';
 const socket = io.connect('https://livecam-7fzf.onrender.com');
 
 const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
+  
   const [roomId, setRoomId] = useState('');
   const [isJoined, setIsJoined] = useState(false);
   const [otherUserId, setOtherUserId] = useState('');
@@ -31,40 +32,43 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
   const isLoggedIn = !!sessionStorage.getItem('token');
 
   const handleEmojiClick = (emojiObject) => {
-    setNewMessage((prev) => prev + emojiObject.emoji);
+    setNewMessage((prevMessage) => prevMessage + emojiObject.emoji);
     setShowEmojiPicker(false);
   };
 
-  const handleFileChange = (e) => setSelectedFile(e.target.files[0]);
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
 
   useEffect(() => {
     socket.on('connect', () => console.log(`Connected with ID: ${socket.id}`));
 
-    socket.on('offer', async ({ offer, from }) => {
-      try {
-        await peerConnection.current.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await peerConnection.current.createAnswer();
-        await peerConnection.current.setLocalDescription(answer);
-        socket.emit('answer', { answer, to: from });
-      } catch (error) {
-        console.error('Error handling offer:', error);
-      }
+    socket.on('offer', async (data) => {
+      await peerConnection.current.setRemoteDescription(
+        new RTCSessionDescription(data.offer)
+      );
+      const answer = await peerConnection.current.createAnswer();
+      await peerConnection.current.setLocalDescription(answer);
+      socket.emit('answer', { answer, to: data.from });
     });
 
-    socket.on('answer', async ({ answer }) => {
-      try {
-        await peerConnection.current.setRemoteDescription(new RTCSessionDescription(answer));
-      } catch (error) {
-        console.error('Error handling answer:', error);
-      }
+    socket.on('answer', async (data) => {
+      await peerConnection.current.setRemoteDescription(
+        new RTCSessionDescription(data.answer)
+      );
     });
 
-    socket.on('ice-candidate', ({ candidate }) => {
-      peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
+    socket.on('ice-candidate', (data) => {
+      peerConnection.current.addIceCandidate(new RTCIceCandidate(data.candidate));
     });
 
-    socket.on('chat-message', (msg) => setMessages((prev) => [...prev, msg]));
-    socket.on('file-message', (fileMsg) => setMessages((prev) => [...prev, fileMsg]));
+    socket.on('chat-message', (messageData) => {
+      setMessages((prevMessages) => [...prevMessages, messageData]);
+    });
+
+    socket.on('file-message', (fileMessage) => {
+      setMessages((prevMessages) => [...prevMessages, fileMessage]);
+    });
 
     return () => socket.disconnect();
   }, []);
@@ -86,14 +90,18 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
 
       myVideo.current.srcObject = stream;
 
-      stream.getTracks().forEach((track) => peerConnection.current.addTrack(track, stream));
+      stream.getTracks().forEach((track) =>
+        peerConnection.current.addTrack(track, stream)
+      );
 
       peerConnection.current.ontrack = ({ streams: [remoteStream] }) => {
         otherVideo.current.srcObject = remoteStream;
       };
 
       peerConnection.current.onicecandidate = ({ candidate }) => {
-        if (candidate) socket.emit('ice-candidate', { candidate, to: otherUserId });
+        if (candidate) {
+          socket.emit('ice-candidate', { candidate, to: otherUserId });
+        }
       };
 
       socket.on('user-joined', (userId) => {
@@ -103,7 +111,7 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
 
       socket.on('user-disconnected', endChat);
     } catch (error) {
-      console.error('Error accessing media devices:', error);
+      console.error('Error accessing media devices.', error);
     }
   };
 
@@ -116,9 +124,13 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
   const sendMessage = (e) => {
     e.preventDefault();
     if (newMessage.trim()) {
-      const msg = { id: Date.now(), sender: user.name || 'Guest', content: newMessage };
-      socket.emit('chat-message', msg);
-      setMessages((prev) => [...prev, msg]);
+      const messageData = {
+        id: Date.now(),
+        sender: user ? user.name : 'Guest',
+        content: newMessage,
+      };
+      socket.emit('chat-message', messageData);
+      setMessages([...messages, messageData]);
       setNewMessage('');
     }
   };
@@ -148,20 +160,29 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
     socket.emit('leave-room', roomId);
   };
 
-  const toggleTrack = (type, setState) => {
+  const toggleVideo = () => {
     const stream = myVideo.current.srcObject;
     if (stream) {
       stream.getTracks().forEach((track) => {
-        if (track.kind === type) {
+        if (track.kind === 'video') {
           track.enabled = !track.enabled;
-          setState(track.enabled);
+          setIsVideoEnabled(track.enabled);
         }
       });
     }
   };
 
-  const toggleVideo = () => toggleTrack('video', setIsVideoEnabled);
-  const toggleAudio = () => toggleTrack('audio', setIsAudioEnabled);
+  const toggleAudio = () => {
+    const stream = myVideo.current.srcObject;
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        if (track.kind === 'audio') {
+          track.enabled = !track.enabled;
+          setIsAudioEnabled(track.enabled);
+        }
+      });
+    }
+  };
 
   const uploadFile = async () => {
     if (!selectedFile) return;
@@ -176,15 +197,15 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
       });
 
       const data = await response.json();
-      const msg = {
+      const messageData = {
         id: Date.now(),
-        sender: user.name || 'Guest',
+        sender: user ? user.name : 'Guest',
         content: '',
         file: { name: selectedFile.name, url: data.fileUrl },
       };
 
-      setMessages((prev) => [...prev, msg]);
-      socket.emit('chat-message', msg);
+      setMessages((prevMessages) => [...prevMessages, messageData]);
+      socket.emit('chat-message', messageData);
       setSelectedFile(null);
     } catch (error) {
       console.error('File upload failed:', error);
@@ -196,7 +217,9 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
   }, [messages]);
 
   const toggleFilter = (filter) => {
-    if (myVideo.current) myVideo.current.style.filter = filter;
+    if (myVideo.current) {
+      myVideo.current.style.filter = filter;
+    }
   };
 
   return (
