@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
-import pwd from '../assets/react.svg'
-import logotr from '../Images/nidhin.jpg'
+import pwd from '../assets/nidhin.jpg'
+import logotr from '../Images/logotr.png'
 
 const Footer = () => {
   return (
