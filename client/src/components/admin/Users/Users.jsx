@@ -9,25 +9,27 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); // To capture any errors
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null); // Reset error before fetching
-      try {
-        const stats = await fetchUserStatsAPI(); // API to fetch user stats
-        const userList = await getAllUsersAPI(); // API to fetch all user details
-        setUserStats(stats);
-        setUsers(userList);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setError('Failed to load data. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Place the fetchData function inside the useEffect hook
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null); // Reset any previous errors
+    try {
+      // Make the API calls here
+      const stats = await fetchUserStatsAPI(); // API to fetch user stats
+      const userList = await getAllUsersAPI(); // API to fetch all user details
+      setUserStats(stats);
+      setUsers(userList);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Failed to load data. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, []); // The empty dependency array ensures the effect runs only once when the component mounts
 
   // Chart configuration
   const chartData = {
