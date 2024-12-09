@@ -3,6 +3,7 @@ const authController = require('../controllers/authController');
 const jwtMiddleware = require('../middleware/jwtMiddleware');
 const upload = require('../middleware/multerMiddleware');
 const { check, validationResult } = require('express-validator');
+// const { fetchUserStats } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -20,6 +21,9 @@ router.post(
 );
 
 router.post('/api/login', asyncHandler(authController.login));
+
+// Fetch user statistics
+// router.get('/stats', fetchUserStats);
 
 // Single file upload
 router.post('/api/upload', upload.single('file'), (req, res) => {

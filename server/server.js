@@ -35,6 +35,8 @@ app.use(express.json());  // Enable JSON parsing for API requests
 app.use(applicationMiddleware);  // Apply any custom middleware
 app.use(router);  // Use your defined routes
 
+// app.use('/api/user', router);
+
 // MongoDB Connection
 connectDB();
 

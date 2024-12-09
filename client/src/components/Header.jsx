@@ -61,7 +61,7 @@ function Header({ users }) {
 {users ? (
   <div className="relative">
     <img
-      src={users.profileImage}
+      src={users.profileImage || '../Images/simplepic.jpeg'}
       alt="User Profile"
       className="w-9 h-9 rounded-full cursor-pointer"
       onClick={() => setIsMenuOpen(!isMenuOpen)}
