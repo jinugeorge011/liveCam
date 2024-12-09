@@ -58,6 +58,14 @@ const App = () => {
           }
         />
         <Route
+          path="/settings"
+          element={
+            <RoleBasedRoute requiredRole="admin">
+              <Settings />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
           path="/admindashboard/users"
           element={
             <RoleBasedRoute requiredRole="admin">
