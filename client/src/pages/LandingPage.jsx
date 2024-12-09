@@ -28,7 +28,7 @@ const LandingPage = () => {
         <div className="min-h-screen text-white flex flex-col items-center">
           {/* Hero Section */}
           <section className="text-center py-16 px-4 relative z-10">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">Welcome to ChatWave</h1>
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">Welcome to Kili</h1>
             <p className="text-lg md:text-xl text-gray-300 mb-8">
               Connect with anyone, anywhere, in real-time with high-quality video chat.
             </p>

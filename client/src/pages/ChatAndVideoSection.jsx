@@ -8,6 +8,7 @@ import './ChatAndVideoSection.css';
 const socket = io.connect('https://livecam-7fzf.onrender.com');
 
 const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
+  const [user,setUser] = useState();
   const [roomId, setRoomId] = useState('');
   const [isJoined, setIsJoined] = useState(false);
   const [otherUserId, setOtherUserId] = useState('');
