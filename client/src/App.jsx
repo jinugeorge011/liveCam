@@ -19,7 +19,6 @@ import ChatAndVideoSection from "./pages/ChatAndVideoSection.jsx";
 import Users from "./components/admin/Users/Users.jsx";
 
 const App = () => {
-  const loggedInUser = { name: 'Jinu' };
 
   return (
     <AuthProvider>
@@ -31,7 +30,7 @@ const App = () => {
         <Route path="/contacts" element={<Contact />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/chat" element={<ChatAndVideoSection user={loggedInUser} />} />
+        <Route path="/chat" element={<ChatAndVideoSection/>} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />

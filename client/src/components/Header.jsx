@@ -7,6 +7,7 @@ import logomain from '../Images/Logo-Main.png'
 function Header({ users }) {
   // Check if the user is logged in by checking the token in sessionStorage
   const isLoggedIn = !!sessionStorage.getItem('token');
+  const role = sessionStorage.getItem('role'); // Get the role from sessionStorage
 
   const navigate = useNavigate();
 
@@ -51,7 +52,7 @@ function Header({ users }) {
           Contacts
         </NavLink>
        {users?( <NavLink
-          to={isLoggedIn ? "/dashboard" : "/login"}
+          to={role === 'admin' ? '/admindashboard' : '/dashboard'}
           className={({ isActive }) => `text-black font-medium dark:text-white hover:text-teal-400 ${isActive ? 'border-b-2 border-teal-400' : ''}`}
         >
           Dashboard
