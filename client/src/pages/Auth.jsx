@@ -54,47 +54,58 @@ function Auth({ register }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+  
     const { email, password } = details;
-
+  
+    // Validate input
     if (!email || !password) {
       toast.error("Please fill in all details.");
       return;
     }
-
+  
     try {
-      setLoading(true);
+      setLoading(true); // Indicate loading state
+  
+      // Call the login API
       const result = await loginAPI(details);
+  
+      // Check if the response is successful
       if (result.status >= 200 && result.status < 300) {
-        const userRole = result.data.user?.role; // Assuming role is part of the API response
+        const { token, user } = result.data;
+        const userRole = user?.role; // Extract user role from API response
+  
+        // Show success toast notification
         toast.success("Login successful!", {
           position: "top-right",
           autoClose: 2000,
           theme: "dark",
         });
-
-        sessionStorage.setItem("token", result.data.token);
-        sessionStorage.setItem("username", result.data.user?.username);
+  
+        // Save user details to sessionStorage
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("username", user?.username);
         sessionStorage.setItem("role", userRole);
-
-        // Navigate based on role
-        if (userRole === "admin") {
-          navigate("/admindashboard");
-        } else {
-          navigate("/");
-        }
+  
+        // Navigate based on user role
+        navigate(userRole === "admin" ? "/admindashboard" : "/");
+      } else {
+        throw new Error("Unexpected response from server.");
       }
     } catch (error) {
+      // Extract error message or use a default
       const errorMessage =
         error.response?.data?.message || "An error occurred during login.";
+  
+      // Show error toast notification
       toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
         theme: "dark",
       });
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
-  };
+  };  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
