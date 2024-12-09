@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import vdo from '../assets/vdo.mp4'
 
 function Auth({ register }) {
   const [details, setDetails] = useState({
@@ -116,7 +117,14 @@ function Auth({ register }) {
     <>
 
       <ToastContainer />
-      <div className="bg-blue-950 h-screen flex items-center justify-center">
+      <div className="relative h-screen flex items-center justify-center">
+        <video 
+          src={vdo} 
+          autoPlay 
+          loop 
+          muted
+          className="absolute top-0 left-0 w-full h-full bg-black object-cover z-[-1]" 
+        />
         <StyledWrapper>
           <div className="form-container border-2 border-dashed border-black dark:border-white">
             <p className="title">{register ? "Sign Up" : "Login"}</p>
