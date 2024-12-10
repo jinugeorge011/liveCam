@@ -90,7 +90,6 @@ function Header({ users }) {
     Login
   </NavLink>
 )}
-
         {/* Dark Mode Switcher */}
         <div className="mt-1">
           <DarkModeSwitcher />
