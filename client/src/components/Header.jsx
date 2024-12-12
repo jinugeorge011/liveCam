@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import DarkModeSwitcher from './DarkModeSwitcher';
 import logomain from '../Images/Logo-Main.png'
+import dark from '../Images/dark.png'
 
 
 function Header({ users }) {
@@ -27,9 +28,11 @@ function Header({ users }) {
   return (
     <nav className="sticky top-0 z-50 flex justify-between items-center p-4 border-2 border-dashed border-black dark:border-white bg-white shadow-lg text-black dark:bg-purple-950 dark:text-white">
       <div className="text-2xl font-bold">
-        <img src={logomain} className='w-36 ms-5' alt="Logo" />
+        <img src={logomain} className='w-36 ms-5 hidden dark:block' alt="Logo" />
         {/* <h2 className='ms-5'>KILI</h2> */}
+        <img src={dark} className='w-36 ms-5 dark:hidden' alt="Logo" />
       </div>
+
       
       {/* Nav Links */}
       <ul className={`flex space-x-6 md:flex ${isMenuOpen ? 'block' : 'hidden'} absolute md:static top-14 right-4 bg-gray-800 p-4 rounded-lg md:p-0 md:bg-transparent`}>
