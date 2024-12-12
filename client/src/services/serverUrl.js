@@ -1,1 +1,1 @@
-export const serverURL ="https://livecam-7fzf.onrender.com"
+export const serverURL ="https://livecam-1.onrender.com"

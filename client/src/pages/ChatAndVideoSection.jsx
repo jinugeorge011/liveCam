@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import './ChatAndVideoSection.css';
 
-const socket = io.connect('https://livecam-7fzf.onrender.com');
+const socket = io.connect('https://livecam-1.onrender.com');
 
 const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
   
@@ -191,7 +191,7 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('https://livecam-7fzf.onrender.com', {
+      const response = await fetch('https://livecam-1.onrender.com', {
         method: 'POST',
         body: formData,
       });

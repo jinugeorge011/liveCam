@@ -10,19 +10,12 @@ const upload = require('./config/uploadConfig');
 const socketServer = require('./socketServer');
 const path = require('path');
 
-const allowedOrigins = ["https://chatwave8787.netlify.app"];
 
 const app = express();
 
 // ** CORS configuration for Express and Socket.IO **
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin:" https://kili-videochat.netlify.app",
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 };
