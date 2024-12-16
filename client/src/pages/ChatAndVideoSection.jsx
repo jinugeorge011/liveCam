@@ -8,7 +8,6 @@ import './ChatAndVideoSection.css';
 const socket = io.connect('https://livecam-1.onrender.com');
 
 const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
-  
   const [roomId, setRoomId] = useState('');
   const [isJoined, setIsJoined] = useState(false);
   const [otherUserId, setOtherUserId] = useState('');
@@ -44,22 +43,34 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
     socket.on('connect', () => console.log(`Connected with ID: ${socket.id}`));
 
     socket.on('offer', async (data) => {
-      await peerConnection.current.setRemoteDescription(
-        new RTCSessionDescription(data.offer)
-      );
-      const answer = await peerConnection.current.createAnswer();
-      await peerConnection.current.setLocalDescription(answer);
-      socket.emit('answer', { answer, to: data.from });
+      try {
+        await peerConnection.current.setRemoteDescription(
+          new RTCSessionDescription(data.offer)
+        );
+        const answer = await peerConnection.current.createAnswer();
+        await peerConnection.current.setLocalDescription(answer);
+        socket.emit('answer', { answer, to: data.from });
+      } catch (error) {
+        console.error('Error handling offer:', error);
+      }
     });
 
     socket.on('answer', async (data) => {
-      await peerConnection.current.setRemoteDescription(
-        new RTCSessionDescription(data.answer)
-      );
+      try {
+        await peerConnection.current.setRemoteDescription(
+          new RTCSessionDescription(data.answer)
+        );
+      } catch (error) {
+        console.error('Error handling answer:', error);
+      }
     });
 
     socket.on('ice-candidate', (data) => {
-      peerConnection.current.addIceCandidate(new RTCIceCandidate(data.candidate));
+      try {
+        peerConnection.current.addIceCandidate(new RTCIceCandidate(data.candidate));
+      } catch (error) {
+        console.error('Error adding ICE candidate:', error);
+      }
     });
 
     socket.on('chat-message', (messageData) => {
@@ -70,7 +81,14 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
       setMessages((prevMessages) => [...prevMessages, fileMessage]);
     });
 
-    return () => socket.disconnect();
+    return () => {
+      socket.off('offer');
+      socket.off('answer');
+      socket.off('ice-candidate');
+      socket.off('chat-message');
+      socket.off('file-message');
+      socket.disconnect();
+    };
   }, []);
 
   const joinRoom = async () => {
@@ -116,9 +134,13 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
   };
 
   const callUser = async (userId) => {
-    const offer = await peerConnection.current.createOffer();
-    await peerConnection.current.setLocalDescription(offer);
-    socket.emit('offer', { offer, to: userId });
+    try {
+      const offer = await peerConnection.current.createOffer();
+      await peerConnection.current.setLocalDescription(offer);
+      socket.emit('offer', { offer, to: userId });
+    } catch (error) {
+      console.error('Error calling user:', error);
+    }
   };
 
   const sendMessage = (e) => {
@@ -195,6 +217,12 @@ const ChatAndVideoSection = ({ user = { name: 'Guest' } }) => {
         method: 'POST',
         body: formData,
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('File upload failed:', response.status, errorText);
+        return;
+      }
 
       const data = await response.json();
       const messageData = {
